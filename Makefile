@@ -20,7 +20,7 @@ DISPLAY_LIBS = $(shell $(RC) --evelibs) -lGuiHtml
 
 ifneq ($(CMSSW_FWLITE_INCLUDE_PATH),)
 HAS_CMSSW = true
-CXXFLAGS += -std=c++17 -I$(subst :, -I,$(CMSSW_FWLITE_INCLUDE_PATH))
+CXXFLAGS += -std=c++0x -I$(subst :, -I,$(CMSSW_FWLITE_INCLUDE_PATH))
 OPT_LIBS += -L$(subst include,lib,$(subst :, -L,$(CMSSW_FWLITE_INCLUDE_PATH)))
 ifneq ($(CMSSW_RELEASE_BASE),)
 CXXFLAGS += -I$(CMSSW_RELEASE_BASE)/src
@@ -94,13 +94,24 @@ DISTTAR = $(DISTDIR).tar.gz
 
 all:
 
-hepmc2pileup$(ExeSuf): \
-	tmp/converters/hepmc2pileup.$(ObjSuf)
-tmp/converters/hepmc2pileup.$(ObjSuf): \
-	converters/hepmc2pileup.cpp \
+hepmc22pileup$(ExeSuf): \
+	tmp/converters/hepmc22pileup.$(ObjSuf)
+tmp/converters/hepmc22pileup.$(ObjSuf): \
+	converters/hepmc22pileup.cpp \
 	classes/DelphesClasses.h \
 	classes/DelphesFactory.h \
 	classes/DelphesHepMC2Reader.h \
+	classes/DelphesPileUpWriter.h \
+	external/ExRootAnalysis/ExRootProgressBar.h \
+	external/ExRootAnalysis/ExRootTreeBranch.h \
+	external/ExRootAnalysis/ExRootTreeWriter.h
+hepmc32pileup$(ExeSuf): \
+	tmp/converters/hepmc32pileup.$(ObjSuf)
+tmp/converters/hepmc32pileup.$(ObjSuf): \
+	converters/hepmc32pileup.cpp \
+	classes/DelphesClasses.h \
+	classes/DelphesFactory.h \
+	classes/DelphesHepMC3Reader.h \
 	classes/DelphesPileUpWriter.h \
 	external/ExRootAnalysis/ExRootProgressBar.h \
 	external/ExRootAnalysis/ExRootTreeBranch.h \
@@ -171,7 +182,8 @@ tmp/examples/Example1.$(ObjSuf): \
 	external/ExRootAnalysis/ExRootTreeWriter.h \
 	external/ExRootAnalysis/ExRootUtilities.h
 EXECUTABLE +=  \
-	hepmc2pileup$(ExeSuf) \
+	hepmc22pileup$(ExeSuf) \
+	hepmc32pileup$(ExeSuf) \
 	lhco2root$(ExeSuf) \
 	pileup2root$(ExeSuf) \
 	root2lhco$(ExeSuf) \
@@ -180,7 +192,8 @@ EXECUTABLE +=  \
 	CaloGrid$(ExeSuf) \
 	Example1$(ExeSuf)
 EXECUTABLE_OBJ +=  \
-	tmp/converters/hepmc2pileup.$(ObjSuf) \
+	tmp/converters/hepmc22pileup.$(ObjSuf) \
+	tmp/converters/hepmc32pileup.$(ObjSuf) \
 	tmp/converters/lhco2root.$(ObjSuf) \
 	tmp/converters/pileup2root.$(ObjSuf) \
 	tmp/converters/root2lhco.$(ObjSuf) \
@@ -1055,7 +1068,8 @@ tmp/modules/TrackCovariance.$(ObjSuf): \
 	classes/DelphesClasses.h \
 	external/TrackCovariance/SolGeom.h \
 	external/TrackCovariance/SolGridCov.h \
-	external/TrackCovariance/ObsTrk.h
+	external/TrackCovariance/ObsTrk.h \
+	classes/DelphesFormula.h
 tmp/modules/TrackPileUpSubtractor.$(ObjSuf): \
 	modules/TrackPileUpSubtractor.$(SrcSuf) \
 	modules/TrackPileUpSubtractor.h \
