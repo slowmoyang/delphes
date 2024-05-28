@@ -495,6 +495,8 @@ public:
   TLorentzVector P4() const;
   TMatrixDSym CovarianceMatrix() const;
 
+  Bool_t IsRecoPU;
+
   ClassDef(Track, 3)
 };
 

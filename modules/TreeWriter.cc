@@ -417,6 +417,8 @@ void TreeWriter::ProcessTracks(ExRootTreeBranch *branch, TObjArray *array)
     entry->Particle = particle;
 
     entry->VertexIndex = candidate->ClusterIndex;
+
+    entry->IsRecoPU = candidate->IsRecoPU;
   }
 }
 
