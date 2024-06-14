@@ -20,7 +20,7 @@ DISPLAY_LIBS = $(shell $(RC) --evelibs) -lGuiHtml $(SYSLIBS)
 
 ifneq ($(CMSSW_FWLITE_INCLUDE_PATH),)
 HAS_CMSSW = true
-CXXFLAGS += -std=c++0x -I$(subst :, -I,$(CMSSW_FWLITE_INCLUDE_PATH))
+CXXFLAGS += -std=c++17 -I$(subst :, -I,$(CMSSW_FWLITE_INCLUDE_PATH))
 OPT_LIBS += -L$(subst include,lib,$(subst :, -L,$(CMSSW_FWLITE_INCLUDE_PATH)))
 ifneq ($(CMSSW_RELEASE_BASE),)
 CXXFLAGS += -I$(CMSSW_RELEASE_BASE)/src
@@ -319,6 +319,27 @@ EXECUTABLE +=  \
 
 EXECUTABLE_OBJ +=  \
 	tmp/readers/DelphesCMSFWLite.$(ObjSuf)
+
+endif
+
+ifeq ($(HAS_CMSSW),true)
+DelphesCMSFWLitePSWeight$(ExeSuf): \
+	tmp/readers/DelphesCMSFWLitePSWeight.$(ObjSuf)
+
+tmp/readers/DelphesCMSFWLitePSWeight.$(ObjSuf): \
+	readers/DelphesCMSFWLitePSWeight.cpp \
+	classes/DelphesClasses.h \
+	classes/DelphesFactory.h \
+	classes/DelphesStream.h \
+	modules/Delphes.h \
+	external/ExRootAnalysis/ExRootProgressBar.h \
+	external/ExRootAnalysis/ExRootTreeBranch.h \
+	external/ExRootAnalysis/ExRootTreeWriter.h
+EXECUTABLE +=  \
+	DelphesCMSFWLitePSWeight$(ExeSuf)
+
+EXECUTABLE_OBJ +=  \
+	tmp/readers/DelphesCMSFWLitePSWeight.$(ObjSuf)
 
 endif
 
@@ -1780,7 +1801,7 @@ FASTJET_OBJ +=  \
 
 ifeq ($(HAS_PYTHIA8),true)
 FASTJET_OBJ +=  \
-	
+
 endif
 
 tmp/display/Delphes3DGeometry.$(ObjSuf): \
@@ -1827,7 +1848,7 @@ DISPLAY_OBJ +=  \
 
 ifeq ($(HAS_PYTHIA8),true)
 DISPLAY_OBJ +=  \
-	
+
 endif
 
 tmp/external/tcl/panic.$(ObjSuf): \

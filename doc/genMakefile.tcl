@@ -298,6 +298,11 @@ executableDeps {readers/DelphesCMSFWLite.cpp}
 puts {endif}
 puts {}
 
+puts {ifeq ($(HAS_CMSSW),true)}
+executableDeps {readers/DelphesCMSFWLitePSWeight.cpp}
+puts {endif}
+puts {}
+
 puts {ifeq ($(HAS_PROMC),true)}
 executableDeps {readers/DelphesProMC.cpp}
 puts {endif}

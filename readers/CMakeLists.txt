@@ -1,12 +1,13 @@
 include_directories(
   ${CMAKE_SOURCE_DIR}
-  ${DelphesExternals_INCLUDE_DIR} 
+  ${DelphesExternals_INCLUDE_DIR}
 )
 
 file(GLOB executables RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 
 # TODO: implement switch to enable CMSSW, ProMC and ProIO if present
 list(REMOVE_ITEM executables DelphesCMSFWLite.cpp)
+list(REMOVE_ITEM executables DelphesCMSFWLitePSWeight.cpp)
 list(REMOVE_ITEM executables DelphesProMC.cpp)
 list(REMOVE_ITEM executables DelphesProIO.cpp)
 if(NOT PYTHIA8_FOUND)
