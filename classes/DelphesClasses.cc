@@ -37,6 +37,7 @@ CompBase *Muon::fgCompare = CompPT<Muon>::Instance();
 CompBase *Jet::fgCompare = CompPT<Jet>::Instance();
 CompBase *Track::fgCompare = CompPT<Track>::Instance();
 CompBase *Tower::fgCompare = CompE<Tower>::Instance();
+CompBase *PFObject::fgCompare = CompE<PFObject>::Instance();
 CompBase *ParticleFlowCandidate::fgCompare = CompE<ParticleFlowCandidate>::Instance();
 CompBase *HectorHit::fgCompare = CompE<HectorHit>::Instance();
 CompBase *Vertex::fgCompare = CompSumPT2<Vertex>::Instance();
@@ -256,6 +257,7 @@ Candidate::Candidate() :
   ExclYmerge45(0),
   ExclYmerge56(0),
   ParticleDensity(0),
+  PUPPIWeight(1),
   fFactory(0),
   fArray(0)
 {

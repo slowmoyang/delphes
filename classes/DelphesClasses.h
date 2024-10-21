@@ -31,6 +31,7 @@
 
 // Dependencies (#includes)
 
+#include "RtypesCore.h"
 #include "TLorentzVector.h"
 #include "TMatrixDSym.h"
 #include "TObject.h"
@@ -496,6 +497,7 @@ public:
   TMatrixDSym CovarianceMatrix() const;
 
   Bool_t IsRecoPU;
+  Double_t PUPPIWeight;
 
   ClassDef(Track, 3)
 };
@@ -519,6 +521,8 @@ public:
 
   Float_t Edges[4]; // calorimeter tower edges
 
+  Double_t PUPPIWeight;
+
   TRefArray Particles; // references to generated particles
 
   static CompBase *fgCompare; //!
@@ -528,6 +532,44 @@ public:
 
   ClassDef(Tower, 2)
 };
+
+
+class PFObject: public SortableObject
+{
+public:
+  Int_t PID; // HEP ID number
+
+  Int_t Charge; // track charge
+
+  Float_t Px;
+  Float_t Py;
+  Float_t Eta;
+  Float_t E;
+
+  Float_t D0; // track transverse impact parameter
+  Float_t DZ; // track longitudinal impact parameter
+
+  Int_t   GenLVCount;
+  Float_t GenLVPx;
+  Float_t GenLVPy;
+  Float_t GenLVPz;
+  Float_t GenLVEnergy;
+
+  Int_t   GenPUCount;
+  Float_t GenPUPx;
+  Float_t GenPUPy;
+  Float_t GenPUPz;
+  Float_t GenPUEnergy;
+
+  Bool_t IsRecoPU;
+  Double_t PUPPIWeight;
+
+  static CompBase *fgCompare; //!
+  const CompBase *GetCompare() const { return fgCompare; }
+
+  ClassDef(PFObject, 3)
+};
+
 
 //---------------------------------------------------------------------------
 
@@ -607,6 +649,8 @@ public:
   Float_t Ehad; // calorimeter tower hadronic energy
 
   Float_t Edges[4]; // calorimeter tower edges
+
+  Double_t PUPPIWeight;
 
   TRefArray Particles; // references to generated particles
 
@@ -777,6 +821,8 @@ public:
 
   // event characteristics variables
   Double_t ParticleDensity; // particle multiplicity density in the proximity of the particle
+
+  Double_t PUPPIWeight;
 
   static CompBase *fgCompare; //!
   const CompBase *GetCompare() const { return fgCompare; }

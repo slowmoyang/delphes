@@ -263,26 +263,42 @@ void RunPUPPI::Process()
   }
   // Create PUPPI container
   fPuppi->initialize(puppiInputVector);
-  fPuppi->puppiWeights();
-  std::vector<PseudoJet> puppiParticles = fPuppi->puppiParticles();
+  const std::vector<double> puppi_weight_vec = fPuppi->puppiWeights();
+  std::vector<PseudoJet> puppi_particle_vec = fPuppi->puppiParticles();
 
   // Loop on final particles
-  for(std::vector<PseudoJet>::iterator it = puppiParticles.begin(); it != puppiParticles.end(); it++)
+  for (size_t puppi_idx = 0; puppi_idx < puppi_particle_vec.size(); ++puppi_idx)
   {
-    if(it->user_index() <= int(InputParticles.size()))
+    const PseudoJet puppi_particle = puppi_particle_vec.at(puppi_idx);
+    const double puppi_weight = puppi_weight_vec.at(puppi_idx);
+
+    const int user_index = puppi_particle.user_index();
+
+    if (user_index <= int(InputParticles.size()))
     {
-      candidate = static_cast<Candidate *>(InputParticles.at(it->user_index())->Clone());
-      candidate->Momentum.SetPxPyPzE(it->px(), it->py(), it->pz(), it->e());
+      candidate = static_cast<Candidate *>(InputParticles.at(user_index)->Clone());
+      // NOTE: to save PF candidates with PUPPI weights, comment it out not to update momentum
+      /* candidate->Momentum.SetPxPyPzE( */
+      /*     puppi_particle.px(), */
+      /*     puppi_particle.py(), */
+      /*     puppi_particle.pz(), */
+      /*     puppi_particle.e() */
+      /* ); */
+      candidate->PUPPIWeight = puppi_weight;
       fOutputArray->Add(candidate);
-      if(puppiInputVector.at(it->user_index()).id == 1 or puppiInputVector.at(it->user_index()).id == 2)
+
+      const int reco_obj_id = puppiInputVector.at(user_index).id;
+      if((reco_obj_id == 1) or (reco_obj_id == 2))
         fOutputTrackArray->Add(candidate);
-      else if(puppiInputVector.at(it->user_index()).id == 0)
+      else if(reco_obj_id == 0)
         fOutputNeutralArray->Add(candidate);
+
     }
     else
     {
       std::cerr << " particle not found in the input Array --> skip " << std::endl;
       continue;
     }
+
   }
 }

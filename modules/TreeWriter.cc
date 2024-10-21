@@ -70,6 +70,7 @@ void TreeWriter::Init()
   fClassMap[GenParticle::Class()] = &TreeWriter::ProcessParticles;
   fClassMap[Vertex::Class()] = &TreeWriter::ProcessVertices;
   fClassMap[Track::Class()] = &TreeWriter::ProcessTracks;
+  fClassMap[PFObject::Class()] = &TreeWriter::ProcessPFObjects;
   fClassMap[Tower::Class()] = &TreeWriter::ProcessTowers;
   fClassMap[ParticleFlowCandidate::Class()] = &TreeWriter::ProcessParticleFlowCandidates;
   fClassMap[Photon::Class()] = &TreeWriter::ProcessPhotons;
@@ -419,6 +420,7 @@ void TreeWriter::ProcessTracks(ExRootTreeBranch *branch, TObjArray *array)
     entry->VertexIndex = candidate->ClusterIndex;
 
     entry->IsRecoPU = candidate->IsRecoPU;
+    entry->PUPPIWeight = candidate->PUPPIWeight;
   }
 }
 
@@ -463,8 +465,100 @@ void TreeWriter::ProcessTowers(ExRootTreeBranch *branch, TObjArray *array)
 
     entry->T = position.T() * 1.0E-3 / c_light;
     entry->NTimeHits = candidate->NTimeHits;
+    entry->PUPPIWeight = candidate->PUPPIWeight;
 
     FillParticles(candidate, &entry->Particles);
+  }
+}
+
+//------------------------------------------------------------------------------
+void TreeWriter::ProcessPFObjects(ExRootTreeBranch *branch, TObjArray *array)
+{
+  TIter iterator(array);
+  Candidate *candidate = 0;
+  Candidate *particle = 0;
+  PFObject *entry = 0;
+  const Double_t c_light = 2.99792458E8;
+
+  // loop over all tracks
+  iterator.Reset();
+  while((candidate = static_cast<Candidate *>(iterator.Next())))
+  {
+    const TLorentzVector &position = candidate->Position;
+    const TLorentzVector &momentum = candidate->Momentum;
+
+    const bool is_track = candidate->Charge != 0;
+    const TLorentzVector& eta_vector = is_track ? position : momentum;
+
+    const Double_t cosTheta = TMath::Abs(eta_vector.CosTheta());
+    const Double_t signz = (eta_vector.Pz() >= 0.0) ? 1.0 : -1.0;
+    const Double_t eta = (cosTheta == 1.0 ? signz * 999.9 : eta_vector.Eta());
+
+    entry = static_cast<PFObject *>(branch->NewEntry());
+
+    entry->SetBit(kIsReferenced);
+    entry->SetUniqueID(candidate->GetUniqueID());
+
+    entry->PID = candidate->PID;
+    entry->Charge = candidate->Charge;
+
+    entry->Px = momentum.Px();
+    entry->Py = momentum.Py();
+    entry->Eta = eta;
+    entry->E = momentum.E();
+
+    entry->D0 = candidate->D0;
+    entry->DZ = candidate->DZ;
+
+    entry->IsRecoPU = candidate->IsRecoPU;
+    entry->PUPPIWeight = candidate->PUPPIWeight;
+
+    TRefArray gen_particle_array;
+    FillParticles(candidate, &gen_particle_array);
+
+
+    std::vector<Candidate *> gen_particle_vec;
+    if (is_track) {
+      gen_particle_vec.push_back(static_cast<Candidate *>(candidate->GetCandidates()->At(0)));
+
+    } else {
+      for (int idx = 0; idx < gen_particle_array.GetEntries(); ++idx) {
+        gen_particle_vec.push_back(dynamic_cast<Candidate*>(gen_particle_array.At(idx)));
+      }
+    }
+
+    TLorentzVector gen_lv_momentum{};
+    TLorentzVector gen_pu_momentum{};
+    Int_t gen_lv_count = 0;
+    Int_t gen_pu_count = 0;
+
+    for (const Candidate* gen_particle : gen_particle_vec) {
+      TLorentzVector momentum = gen_particle->Momentum;
+      if (gen_particle->IsPU) {
+        gen_pu_momentum += momentum;
+        gen_pu_count++;
+
+      } else {
+        gen_lv_momentum += momentum;
+        gen_lv_count++;
+
+      }
+    }
+
+
+
+    entry->GenLVCount = gen_lv_count;
+    entry->GenLVPx = gen_lv_momentum.Px();
+    entry->GenLVPy = gen_lv_momentum.Py();
+    entry->GenLVPz = gen_lv_momentum.Pz();
+    entry->GenLVEnergy = gen_lv_momentum.E();
+
+    entry->GenPUCount = gen_pu_count;
+    entry->GenPUPx = gen_pu_momentum.Px();
+    entry->GenPUPy = gen_pu_momentum.Py();
+    entry->GenPUPz = gen_pu_momentum.Pz();
+    entry->GenPUEnergy = gen_pu_momentum.E();
+
   }
 }
 
