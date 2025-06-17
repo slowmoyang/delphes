@@ -373,6 +373,10 @@ public:
   UInt_t BTagAlgo; // 0 or 1 for a jet that has been tagged as containing a heavy quark
   UInt_t BTagPhys; // 0 or 1 for a jet that has been tagged as containing a heavy quark
 
+  UInt_t CTag;
+  UInt_t CTagAlgo;
+  UInt_t CTagPhys;
+
   UInt_t TauTag; // 0 or 1 for a jet that has been tagged as a tau
   Float_t TauWeight; // probability for jet to be identified as tau
 
@@ -667,6 +671,10 @@ public:
   UInt_t BTag;
   UInt_t BTagAlgo;
   UInt_t BTagPhys;
+
+  UInt_t CTag;
+  UInt_t CTagAlgo;
+  UInt_t CTagPhys;
 
   UInt_t TauTag;
   Float_t TauWeight;

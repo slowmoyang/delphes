@@ -471,6 +471,7 @@ tmp/modules/ModulesDict.$(SrcSuf): \
 	modules/UniqueObjectFinder.h \
 	modules/TrackCountingBTagging.h \
 	modules/BTagging.h \
+	modules/CTagging.h \
 	modules/TauTagging.h \
 	modules/TrackCountingTauTagging.h \
 	modules/TreeWriter.h \
@@ -744,6 +745,12 @@ tmp/modules/BeamSpotFilter.$(ObjSuf): \
 	external/ExRootAnalysis/ExRootClassifier.h \
 	external/ExRootAnalysis/ExRootFilter.h \
 	external/ExRootAnalysis/ExRootResult.h
+tmp/modules/CTagging.$(ObjSuf): \
+	modules/CTagging.$(SrcSuf) \
+	modules/CTagging.h \
+	classes/DelphesClasses.h \
+	classes/DelphesFactory.h \
+	classes/DelphesFormula.h
 tmp/modules/Calorimeter.$(ObjSuf): \
 	modules/Calorimeter.$(SrcSuf) \
 	modules/Calorimeter.h \
@@ -1257,6 +1264,7 @@ DELPHES_OBJ +=  \
 	tmp/modules/AngularSmearing.$(ObjSuf) \
 	tmp/modules/BTagging.$(ObjSuf) \
 	tmp/modules/BeamSpotFilter.$(ObjSuf) \
+	tmp/modules/CTagging.$(ObjSuf) \
 	tmp/modules/Calorimeter.$(ObjSuf) \
 	tmp/modules/Cloner.$(ObjSuf) \
 	tmp/modules/ClusterCounting.$(ObjSuf) \
@@ -2384,6 +2392,10 @@ external/fastjet/AreaDefinition.hh: \
 	@touch $@
 
 modules/ParticleDensity.h: \
+	classes/DelphesModule.h
+	@touch $@
+
+modules/CTagging.h: \
 	classes/DelphesModule.h
 	@touch $@
 
